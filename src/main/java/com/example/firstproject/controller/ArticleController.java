@@ -10,8 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import java.util.ArrayList;
 
-import java.net.SocketOption;
 
 @Slf4j
 @Controller
@@ -26,17 +26,14 @@ public class ArticleController {
 
     @PostMapping("/articles/create") // URL 요청 접수
     public String createArticle(ArticleForm form) { // 폼 데이터를 dto로 받기
-//        System.out.println(form.toString());
         log.info(form.toString());
 
         // 1. dto를 엔티티로 변환
         Article article = form.toEntity();
-//        System.out.println(article.toString());
         log.info(article.toString());
 
         // 2. 리파지토리로 엔티티를 db에 저장
         Article saved = articleRepository.save(article);
-//        System.out.println(saved.toString());
         log.info(saved.toString());
 
         return "";
@@ -54,5 +51,17 @@ public class ArticleController {
 
         // 3. 뷰 페이지 반환하기
         return "articles/show";
+    }
+
+    @GetMapping("/articles")
+    public String index(Model model) {
+        // 1. 모든 데이터 가져오기
+        ArrayList<Article> articleEntityList = articleRepository.findAll();
+
+        // 2. 모델에 데이터 등록하기
+        model.addAttribute("articleList", articleEntityList);
+
+        // 3. 뷰 페이지 설정하기
+        return "articles/index";
     }
 }
